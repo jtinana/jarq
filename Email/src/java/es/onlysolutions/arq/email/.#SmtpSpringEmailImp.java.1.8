@@ -1,0 +1,304 @@
+package es.datadviser.arq.email;
+
+import es.datadviser.arq.core.configuration.Configuracion;
+import es.datadviser.arq.core.configuration.exception.ConfigurationException;
+import es.datadviser.arq.core.log.LoggerGenerator;
+import org.apache.commons.logging.Log;
+import org.springframework.mail.javamail.JavaMailSender;
+import org.springframework.mail.javamail.JavaMailSenderImpl;
+import org.springframework.mail.javamail.MimeMessageHelper;
+import org.springframework.mail.javamail.MimeMessagePreparator;
+
+import javax.mail.Session;
+import javax.mail.internet.MimeMessage;
+import javax.naming.InitialContext;
+import javax.naming.NamingException;
+import java.io.File;
+import java.util.Iterator;
+import java.util.Map;
+import java.util.Properties;
+
+/**
+ * Implementación concreta del envío de Email.
+ * Utiliza las clases de Spring y JavaMail para realizar el envío. En cada ejecución del método send() se procede a la limpieza del mensaje.
+ * Es necesario introducir las librerias de Spring y JavaMail para poder ejecutar el envío correctamente.
+ * El protocolo es SMTP.
+ * Deben configurarse las siguientes propiedades mediante la Configuracion de la arquitectura:<br>
+ *
+ */
+public final class SmtpSpringEmailImp extends Email
+{
+
+    /**
+     * Indica el modo en el que se instanciara la sesion de JavaMail.
+     * Valores validos son:
+     * · JndiSession -> Se realiza el lookup de Jndi de la session.
+     * · PropertiesSession -> Se carga la session mediante las propiedades de configuración.
+     */
+    public static final String SESSION_MODE = "email.session.mode";
+
+    /**
+     * En caso de cargar la session desde Jndi, se realiza el lookup del nombre indicado en este parametro de la configuracion.
+     */
+    public static final String JNDI_SESSION_NAME = "email.jndi.name";
+
+
+    /**
+     * Host SMTP para el envío de correo.
+     */
+    public static final String HOST = "email.properties.host";
+
+    /**
+     * Puerto del host SMTP.
+     */
+    public static final String PORT = "email.properties.port";
+
+    /**
+     * Usuario para iniciar la sesion de email.
+     */
+    public static final String USERNAME = "email.properties.username";
+
+    /**
+     * Password para iniciar la sesion con el username indicado.
+     */
+    public static final String PASSWORD = "email.properties.password";
+
+    /**
+     * El logger de la clase.
+     */
+    private static final Log logger = LoggerGenerator.getLogger( SmtpSpringEmailImp.class );
+
+    /**
+     * Objecto JavaMail sender que debe ser configurado mediante Configuracion.
+     */
+    private static JavaMailSender javaMailSender;
+
+    /**
+     * Constructor sin parámetros. Instancia el JavaMailSender y lo configura.
+     * En funcion del modo indicado se localiza de JNDI la Session o se configura mediante propiedades de configuracion.
+     */
+    public SmtpSpringEmailImp()
+    {
+        if( javaMailSender == null )
+        {
+            javaMailSender = new JavaMailSenderImpl();
+
+            String sessionMode = Configuracion.getString( SESSION_MODE );
+
+            if( "jndisession".equalsIgnoreCase( sessionMode ) ) //Cargamos de JNDI
+            {
+                InitialContext initialContext;
+                try
+                {
+                    initialContext = new InitialContext();
+                }
+                catch (NamingException e)
+                {
+                    logger.error(e);
+                    throw new ConfigurationException("Error al tratar de crear el contexto JNDI", e);
+                }
+
+                Object objJavaMailSession;
+                String lookupName = Configuracion.getString( JNDI_SESSION_NAME );
+                try
+                {
+                    objJavaMailSession = initialContext.lookup( lookupName );
+                }
+                catch (NamingException e)
+                {
+                    ConfigurationException cex = new ConfigurationException("No se ha podido localizar el objeto de JNDI bajo el nombre: " + lookupName, e);
+                    logger.error(cex);
+                    throw cex;
+                }
+
+                if( !(objJavaMailSession instanceof Session) )
+                {
+                    IllegalArgumentException e = new IllegalArgumentException("El objeto obtenido de JNDI bajo el nombre '" + lookupName +
+                            "' no es un objeto de la clase " + Session.class.getName() + ", es un objeto de la clase " +
+                            objJavaMailSession.getClass().getName());
+                    logger.error(e);
+                    throw e;
+                }
+
+                Session javaMailSession = (Session) objJavaMailSession;
+
+                ((JavaMailSenderImpl)javaMailSender).setSession( javaMailSession );
+
+                if( logger.isInfoEnabled() )
+                {
+                    logger.info("Session obtenida correctamente de JNDI.");
+                }
+            }
+            else if( "propertiessession".equalsIgnoreCase( sessionMode ) ) //Cargamos de configuracion
+            {
+                Properties javaMailProps = System.getProperties();
+
+                ((JavaMailSenderImpl)javaMailSender).setJavaMailProperties(javaMailProps);
+                ((JavaMailSenderImpl)javaMailSender).setHost(Configuracion.getString(HOST));
+                ((JavaMailSenderImpl)javaMailSender).setPort(Configuracion.getInteger(PORT));
+                ((JavaMailSenderImpl)javaMailSender).setUsername(Configuracion.getString(USERNAME));
+                ((JavaMailSenderImpl)javaMailSender).setPassword(Configuracion.getString(PASSWORD));
+
+            }
+            else //Nombre no válido
+            {
+                IllegalStateException illegalStateException = new IllegalStateException("Se debe indicar un modo de Session valido. " +
+                        "Consulte el JavaDoc de la clase " + SmtpSpringEmailImp.class.getName() + " para mas informacion");
+                logger.error( illegalStateException );
+                throw illegalStateException;
+            }
+
+            if( logger.isInfoEnabled() )
+            {
+                logger.info("################################################");
+                logger.info("Objecto JavaMailSender configurado correctamente");
+                logger.info("Props: " + ((JavaMailSenderImpl)javaMailSender).getSession().getProperties());
+                logger.info("################################################");
+            }
+        }
+    }
+    /**
+     * Método abstracto para enviar el contenido recogido en el correo.
+     * Dependerá de la implementación concreta.
+     */
+    public void send()
+    {
+        MimeMessagePreparator mimeMessagePreparator = new MimeMessagePreparatorImp();
+
+        javaMailSender.send( mimeMessagePreparator );
+
+        if( logger.isDebugEnabled() )
+        {
+            logger.debug("Email enviado correctamente: " + mimeMessagePreparator);
+        }
+
+    }
+
+    private class MimeMessagePreparatorImp implements MimeMessagePreparator
+    {
+
+        public void prepare(MimeMessage mimeMessage) throws Exception
+        {
+            
+            MimeMessageHelper message;
+
+            if( !getAttachments().isEmpty() || !getInLines().isEmpty() )
+            {
+                //Creamos el objeto en modo multipart
+                message = new MimeMessageHelper(mimeMessage, true);
+            }
+            else
+            {
+                message = new MimeMessageHelper(mimeMessage);
+            }
+
+
+            //Añadimos los TOs que haya en el Email
+            for (int index = 0; index < getTos().size(); index++)
+            {
+                String addressTo = getTos().get(index);
+                message.addTo( addressTo );
+            }
+
+            if( logger.isDebugEnabled() )
+            {
+                logger.debug("Añadidos con éxito " + getTos().size() + " direcciones de To");
+            }
+
+            //Añadimos los CCC que haya en el email.
+            for (int index = 0; index < getCcs().size(); index++)
+            {
+                String addressCc = getCcs().get(index);
+                message.addCc( addressCc );
+            }
+
+            if( logger.isDebugEnabled() )
+            {
+                logger.debug("Añadidos con éxito " + getCcs().size() + " direcciones de Cc");
+            }
+
+            //Añadimos los Bc que hay en el Email
+            for (int index = 0; index < getBcs().size(); index++)
+            {
+                String addressBc = getBcs().get(index);
+                message.addBcc( addressBc );
+            }
+
+            if( logger.isDebugEnabled() )
+            {
+                logger.debug("Añadidos con éxito " + getBcs().size() + " direcciones de Bc");
+            }
+
+             //Comprobamos si es vacio ya que la mayoria de las veces será asi y no es necesario crear el iterator.
+            //Se deben añadir antes de insertar el body del email para que Spring resuelva correctamente las dependencias.
+            if( !getInLines().isEmpty() )
+            {
+
+                // Añadimos los adjuntos mediante cid.
+                for (Iterator iterator = getInLines().entrySet().iterator(); iterator.hasNext();)
+                {
+                    Map.Entry entry = (Map.Entry) iterator.next();
+                    String cid = (String) entry.getKey();
+                    File file = (File) entry.getValue();
+
+                    message.addInline( cid, file );
+
+                    if( logger.isDebugEnabled() )
+                    {
+                        logger.debug("Añadimos asociado al cid: " + cid + " el fichero InLine: " + file.getName());
+                    }
+                }
+            }
+
+            if( logger.isDebugEnabled() )
+            {
+                logger.debug("Añadimos " + getInLines().size() + " ficheros InLine");
+            }
+
+
+            //Añadimos el subject
+            message.setSubject( getSubject() );
+
+            if( logger.isDebugEnabled() )
+            {
+                if( getSubject().length() > 10 )
+                {
+                    logger.debug("Añadimos el subject: " + getSubject().substring(0,10) + " . . .");
+                }
+                else
+                {
+                    logger.debug("Añadimos el subject: " + getSubject());
+                }
+            }
+
+            //Añadimos los adjuntos
+            for( int index=0; index < getAttachments().size(); index++ )
+            {
+                File file = getAttachments().get( index );
+                message.addAttachment( file.getName(), file );
+            }
+
+            if( logger.isDebugEnabled() )
+            {
+                logger.debug("Hemos adjuntado " + getAttachments().size() + " ficheros al email.");
+            }
+
+            //Añadimos el texto del mensaje
+            message.setText( getText(), true );
+            if( logger.isDebugEnabled() )
+            {
+                logger.debug("Añadimos el texto al email. Characteres: " + getText().length());
+            }
+
+            //Añadimos el from  
+            message.setFrom( getFrom() );
+
+            if( logger.isDebugEnabled() )
+            {
+                logger.debug("Añadimos el from: " + getFrom());
+            }
+
+        }
+    }
+
+}

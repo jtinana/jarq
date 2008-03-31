@@ -1,0 +1,78 @@
+<?xml version="1.0" encoding="iso-8859-1" ?>
+<project default="">
+    <!-- OJO: Sólo usar desde el build.xml de la aplicacion, no de los módulos -->
+
+    <macrodef name="generar-informes-tests">
+        <attribute name="root-dir" default="."/>
+        <attribute name="test-results" default="@{root-dir}/reports/test-results"/>
+        <attribute name="test-reports" default="@{root-dir}/reports/test-reports"/>
+        <attribute name="test-coverage" default="@{root-dir}/reports/test-coverage"/>
+        <attribute name="test-lib" default="@{root-dir}/test-lib"/>
+        <sequential>
+            <mkdir dir="@{test-reports}"/>
+            <junitreport todir="@{test-reports}">
+                <fileset dir="@{test-results}">
+                    <include name="TEST-*.xml"/>
+                </fileset>
+                <report todir="@{test-reports}" format="noframes"/>
+            </junitreport>
+            <taskdef classpath="@{test-lib}/jcoverage.jar" resource="tasks.properties"/>
+            <merge>
+                <fileset dir=".">
+                    <include name="jcoverage.ser"/>
+                    <include name="**/jcoverage.ser"/>
+                </fileset>
+            </merge>
+            <mkdir dir="@{test-coverage}"/>
+            <path id="generar-informes-tests-jcoverage-src">
+                <dirset dir="@{root-dir}" includes="*/src/java"/>
+            </path>
+            <report destdir="@{test-coverage}">
+                <src refid="generar-informes-tests-jcoverage-src"/>
+            </report>
+        </sequential>
+    </macrodef>
+
+    <!--
+
+   <macrodef name="generar-javadoc">
+       <attribute name="api-dir" default="docs/api" />
+       <element name="exclusiones" description="Conjunto de elementos 'exclude' con patrones a excluir de la documentación" optional="true" />
+       <sequential>
+           <property name="dir" location="." />
+           <echo message="dir=${dir}" />
+           <replace file="compiled-files.txt" token="${dir}" value="" />
+           <replaceregexp file="compiled-files.txt" match="^/(.*)" replace="\1" byline="true" />
+           <javadoc destdir="@{api-dir}" author="false" version="false" use="true"
+               windowtitle="${ant.project.name}" verbose="false" useexternalfile="yes" >
+               <fileset dir="." includesfile="compiled-files.txt">
+                   <exclusiones />
+               </fileset>
+               <classpath>
+                   <fileset dir="." includes="**/*lib/*.jar" />
+               </classpath>
+
+               <tag name="modelguid" description="Info para 2-way engineering" enabled="no" />
+               <tag name="associates" description="Clase que formará parte de la colección" enabled="no" />
+           </javadoc>
+       </sequential>
+   </macrodef>
+
+
+    -->
+
+    <macrodef name="limpieza-app">
+        <attribute name="root-dir" default="."/>
+        <attribute name="api-dir" default="@{root-dir}/api"/>
+        <attribute name="reports-dir" default="@{root-dir}/reports"/>
+        <attribute name="dist" default="@{root-dir}/dist"/>
+        <sequential>
+            <delete dir="@{api-dir}" includeemptydirs="true"/>
+            <delete dir="@{reports-dir}" includeemptydirs="true"/>
+            <delete file="compiled-files.txt"/>
+            <delete file="jcoverage.ser"/>
+            <delete dir="@{dist}"/>
+        </sequential>
+    </macrodef>
+
+</project>
