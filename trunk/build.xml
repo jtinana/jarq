@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="iso-8859-1"?>
+
+<project name="jarq" default="all" basedir=".">
+
+    <path id="src">
+        <dirset dir="." includes="*/src/java"/>
+    </path>
+
+    <import file="build-qa.xml"/>
+    <import file="build-app-qa.xml"/>
+    <property file="build.properties"/>
+
+    <target name="all" depends="cleanAll"
+            description="Genera todos los componentes de la arquitectura" >
+        <antcall target="email" />
+        <antcall target="excel" />
+    </target>
+
+    <target name="core">
+        <ant dir="Core" inheritall="false" target="dist"/>
+        <echo message="Generado el Core de la Arquitectura" />
+    </target>
+
+    <target name="email" depends="core">
+        <ant dir="Email" inheritall="false" target="dist"/>
+        <echo message="Generado el componente de correo de la Arquitectura" />
+    </target>
+
+    <target name="excel" depends="core" >
+        <ant dir="Excel" inheritall="false" target="dist"/>
+        <echo message="Generado el componente de Excel de la Arquitectura" />
+    </target>
+
+    <target name="clean">
+        <limpieza-app/>
+    </target>
+
+    <target name="cleanAll">
+        <limpieza-app/>
+        <ant dir="Core" inheritall="false" target="clean"/>
+    </target>
+
+    <target name="crearEntregable" depends="all"
+        description="Crea un fichero zip con los jar necesarios a incluir" >
+        <!-- Borramos el fichero zip si existe -->
+        <delete file="${basedir}/dist/${ant.project.name}.zip" quiet="true"/>
+        <zip destfile="${basedir}/dist/${ant.project.name}.zip" >
+            <fileset dir="${basedir}/dist">
+                <include name="*.jar" />
+            </fileset>
+        </zip>
+        <echo message="Creado entregable en la ruta: ${basedir}/dist/${ant.project.name}.zip " />
+        <antcall target="limpiarEntrega" />
+    </target>
+
+    <target name="limpiarEntrega" description="Limpia la carpeta dist dejando tan solo los entregables" >
+        <delete>
+            <fileset dir="${basedir}/dist/">
+                <exclude name="*.zip" />
+                <exclude name="*.war" />
+                <exclude name="*.ear" />
+            </fileset>
+        </delete>
+    </target>
+
+     <target name="javadocCore" description="Genera el javadoc del Core" >
+        <delete dir="${basedir}/docs/javadoc" quiet="true"/>
+        <mkdir dir="${basedir}/docs/javadoc"/>
+
+        <javadoc destdir="${basedir}/docs/javadoc/Core" author="true" version="true" use="true" windowtitle="${ant.project.name}">
+            <packageset dir="Core/src/java" defaultexcludes="yes">
+                <include name="es/onlysolutions/arq/core/accesobd"/>
+                <include name="es/onlysolutions/arq/core/accesobd/exception"/>
+                <include name="es/onlysolutions/arq/core/service"/>
+                <include name="es/onlysolutions/arq/core/service/exception"/>
+                <include name="es/onlysolutions/arq/core/service/facade/"/>
+                <include name="es/onlysolutions/arq/core/service/pagination/"/>
+                <include name="es/onlysolutions/arq/core/service/utils/"/>
+                <include name="es/onlysolutions/arq/core/mvc/command/"/>
+                <include name="es/onlysolutions/arq/core/mvc/controller/"/>
+                <include name="es/onlysolutions/arq/core/mvc/exception/"/>
+                <include name="es/onlysolutions/arq/core/mvc/list/"/>
+                <include name="es/onlysolutions/arq/core/mvc/utils/"/>
+                <include name="es/onlysolutions/arq/core/mvc/tag/"/>
+                <include name="es/onlysolutions/arq/core/xml/"/>
+                <include name="es/onlysolutions/arq/core/xml/exception/"/>
+                <include name="es/onlysolutions/arq/core/mvc/validator/"/>
+                <include name="es/onlysolutions/arq/core/configuration/"/>
+                <include name="es/onlysolutions/arq/core/configuration/exception"/>
+                <include name="es/onlysolutions/arq/core/aop/"/>
+                <include name="es/onlysolutions/arq/core/auth/"/>
+                <include name="es/onlysolutions/arq/core/auth/exception/"/>
+                <include name="es/onlysolutions/arq/core/thread/"/>
+                <include name="es/onlysolutions/arq/core/thread/exception/"/>
+            </packageset>
+
+            <link href="http://www.hibernate.org/hib_docs/v3/api/" />
+            <link href="http://java.sun.com/j2se/1.5.0/docs/api" />
+            <link href="http://jakarta.apache.org/commons/logging/apidocs/" />
+            <link href="http://jakarta.apache.org/commons/configuration/apidocs/" />
+            <link href="http://displaytag.sourceforge.net/11/displaytag/apidocs/" />
+            <link href="http://www.springframework.org/docs/api/" />
+
+
+            <doctitle><![CDATA[<h1>Arquitectura de software. Version:${version}</h1>]]></doctitle>
+            <bottom><![CDATA[<i>Copyright &#169; 2008 Only Solutions. All Rights Reserved.</i>]]></bottom>
+        </javadoc>
+    </target>
+
+    <target name="javadocExcel" description="Genera el JavaDoc del componente de Excel">
+        <delete dir="${basedir}/docs/javadoc/Excel" quiet="true"/>
+        <mkdir dir="${basedir}/docs/javadoc/Excel"/>
+
+        <javadoc destdir="${basedir}/docs/javadoc/Excel" author="true" version="true" use="true" windowtitle="${ant.project.name}">
+            <packageset dir="Excel/src/java" defaultexcludes="yes">
+                <include name="es/onlysolutions/arq/excel/"/>
+                <include name="es/onlysolutions/arq/excel/exception/"/>
+            </packageset>
+
+            <link href="http://java.sun.com/j2se/1.5.0/docs/api" />
+            <link href="http://jakarta.apache.org/poi/apidocs" />
+            <link href="http://jakarta.apache.org/commons/logging/apidocs/" />
+
+
+            <doctitle><![CDATA[<h1>Componente de Email de la Arquitectura. Version:${version}</h1>]]></doctitle>
+            <bottom><![CDATA[<i>Copyright &#169; 2008 Only Solutions. All Rights Reserved.</i>]]></bottom>
+        </javadoc>
+
+    </target>
+
+    <target name="javadocEmail" description="Genera el javadoc del Email" >
+       <delete  dir="${basedir}/docs/javadoc/Email" quiet="true"/>
+       <mkdir dir="${basedir}/docs/javadoc/Email"/>
+
+       <javadoc destdir="${basedir}/docs/javadoc/Email" author="true" version="true" use="true" windowtitle="${ant.project.name}">
+           <packageset dir="Email/src/java" defaultexcludes="yes">
+               <include name="es/onlysolutions/arq/email/"/>
+               <include name="es/onlysolutions/arq/email/exception/"/>
+           </packageset>
+
+           <link href="http://java.sun.com/j2se/1.5.0/docs/api" />
+           <link href="http://java.sun.com/products/javamail/javadocs/" />
+           <link href="http://jakarta.apache.org/commons/logging/apidocs/" />
+
+
+           <doctitle><![CDATA[<h1>Componente de Email de la Arquitectura. Version:${version}</h1>]]></doctitle>
+           <bottom><![CDATA[<i>Copyright &#169; 2008 Only Solutions. All Rights Reserved.</i>]]></bottom>
+       </javadoc>
+   </target>
+
+
+    <target name="javadoc" depends="javadocCore, javadocEmail, javadocExcel" description="Genera todos los JavaDoc de la arquitectura">
+        <echo message="JavaDoc generados bajo el directorio ${basedir}/docs/javadoc/" />
+    </target>
+
+</project>

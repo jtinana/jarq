@@ -1,0 +1,168 @@
+<?xml version="1.0" encoding="ISO-8859-1" ?>
+<!DOCTYPE taglib PUBLIC "-//Sun Microsystems, Inc.//DTD JSP Tag Library 1.2//EN" "http://java.sun.com/dtd/web-jsptaglibrary_1_2.dtd">
+
+<taglib>
+	<tlib-version>1.1.2</tlib-version>
+	<jsp-version>1.2</jsp-version>
+	<short-name>Spring</short-name>
+	<uri>/tld/arquitectura.tld</uri>
+	<description>JSP TAg Libray de la Arquitectura de software de Datadviser</description>
+
+	<tag>
+		<name>hasPermission</name>
+		<tag-class>es.onlysolutions.arq.core.mvc.tag.HasPermissionTag</tag-class>
+		<body-content>JSP</body-content>
+		<description>
+			Escribe el HTML que haya dentro del tag en caso de que el usuario de la session
+            actual tenga el permiso indicado
+        </description>
+		<attribute>
+			<name>permission</name>
+			<required>true</required>
+			<rtexprvalue>true</rtexprvalue>
+			<description>
+                Indica el permiso que te debe tener para procesar el contenido del tag
+		    </description>
+		</attribute>
+		<attribute>
+			<name>notHasPermission</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+			<description>
+                Si se indica a true, se procesa el contenido del tag en caso de no tener ese permiso.
+                Si no se indica o se indica a false se evalua el contenido si se tiene el permiso.
+            </description>
+		</attribute>
+		<attribute>
+			<name>evaluationCondition</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+			<description>
+                Indica la forma de evaluar los permisos en caso de indicar mas de uno.
+                Si se indica AND el usuario debe tener todos los permisos indicados.
+                Si se indica OR, debe tener al menos uno para evaluar el tag.
+            </description>
+		</attribute>
+	</tag>
+	<tag>
+		<name>errors</name>
+		<tag-class>es.onlysolutions.arq.core.mvc.tag.ErrorsTag</tag-class>
+		<body-content>JSP</body-content>
+		<description>Escribe el HTML que representa los errores producidos</description>
+		<attribute>
+			<name>commandName</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+			<description>Indica el nombre de donde se obtienen los datos.
+				Si no se indica, se toma por defecto la variable "command".
+			</description>
+		</attribute>
+		<attribute>
+			<name>printModel</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+			<description>Indica el formato en el que se devolveran los errores.
+				Si se indica "table", se devolvera una tabla HTML.
+				Si no se indica, se devolvera como un string para mostrarlo en un alert.
+			</description>
+		</attribute>
+		<attribute>
+			<name>classTable</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+			<description>Indica la clase que se incluira en la tabla.</description>
+		</attribute>
+		<attribute>
+			<name>classTr</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+			<description>Indica la clase que se incluira en la fila TR.</description>
+		</attribute>
+		<attribute>
+			<name>classTd</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+			<description>Indica la clase que se incluira en la columna TD.</description>
+		</attribute>
+		<attribute>
+			<name>visibility</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+			<description>Indica el grado de visibilidad de los errores.</description>
+		</attribute>
+	</tag>
+	<tag>
+		<name>fieldValidation</name>
+		<tag-class>es.onlysolutions.arq.core.mvc.tag.JavaScriptValidatorFieldTag</tag-class>
+		<body-content>JSP</body-content>
+		<description>Escribe la funcion JavaScript para validar el campo en base a los parametros indicados</description>
+		<attribute>
+			<name>validationType</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+			<description>Indica el tipo de validacion a realizar. Es Case Insensitive.
+                Tipos validos:
+                REQUIRED -> Indica que el campo es obligatorio.
+                NOT_REQUIRED -> Indica que el campo no es obligatorio. Valor por defecto.
+
+                Cualquier otro valor sera tomado como NOT_REQUIRED.
+            </description>
+		</attribute>
+		<attribute>
+			<name>isNumber</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+			<description>Indica si el campo debe ser numerico.
+                Por defecto se toma valor false.
+            </description>
+		</attribute>
+		<attribute>
+			<name>maxLenght</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+			<description>Indica la longitud maxima del campo. Por defecto no se valida la longitud.</description>
+		</attribute>
+		<attribute>
+			<name>fieldId</name>
+			<required>true</required>
+			<rtexprvalue>true</rtexprvalue>
+			<description>Indica el nombre del campo a validar.</description>
+		</attribute>
+		<attribute>
+			<name>fieldAlias</name>
+			<required>true</required>
+			<rtexprvalue>true</rtexprvalue>
+			<description>Indica el alias del campo a validar. Se utiliza para los mensajes generados.</description>
+		</attribute>
+		<attribute>
+			<name>dateFormat</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+			<description>Especifica un formato de fecha de debe cumplir el campo.
+                Si el campo no existe, o viene vacio, no se realiza comprobacion alguna.
+            </description>
+		</attribute>
+		<attribute>
+			<name>isEmail</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+			<description>Especifica que el campo debe ser un Email valido.
+                Si el campo no existe, o viene vacio, no se realiza comprobacion alguna.
+            </description>
+		</attribute>
+	</tag>
+    <tag>
+		<name>validateFields</name>
+		<tag-class>es.onlysolutions.arq.core.mvc.tag.ValidateFieldsTag</tag-class>
+		<body-content>JSP</body-content>
+		<description>Escribe la funcion JavaScript principal para la validacion de campos </description>
+		<attribute>
+			<name>functionName</name>
+			<required>false</required>
+			<rtexprvalue>true</rtexprvalue>
+			<description>Indica el nombre de la funcion principal que se generara.
+                Si no se indica el parametro se generara por defecto el nombre 'validateFields'
+            </description>
+		</attribute>
+	</tag>
+</taglib>
