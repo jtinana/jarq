@@ -1,0 +1,9 @@
+#summary One-sentence summary of this page.
+
+= Introduction =
+
+Requirements forn installation of JArq.
+
+= Details =
+
+The project is Spring and Hibernate based, so the only requirement to deploy *JArq* is to have a _Servlet Container_ (we recommend Apache Tomcat).
