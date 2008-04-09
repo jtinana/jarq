@@ -64,8 +64,8 @@
     </target>
 
      <target name="javadocCore" description="Genera el javadoc del Core" >
-        <delete dir="${basedir}/docs/javadoc" quiet="true"/>
-        <mkdir dir="${basedir}/docs/javadoc"/>
+        <delete dir="${basedir}/docs/javadoc/Core" quiet="true"/>
+        <mkdir dir="${basedir}/docs/javadoc/Core"/>
 
         <javadoc destdir="${basedir}/docs/javadoc/Core" author="true" version="true" use="true" windowtitle="${ant.project.name}">
             <packageset dir="Core/src/java" defaultexcludes="yes">
@@ -92,6 +92,7 @@
                 <include name="es/onlysolutions/arq/core/auth/exception/"/>
                 <include name="es/onlysolutions/arq/core/thread/"/>
                 <include name="es/onlysolutions/arq/core/thread/exception/"/>
+                <include name="es/onlysolutions/arq/core/mbean/"/>
             </packageset>
 
             <link href="http://www.hibernate.org/hib_docs/v3/api/" />
@@ -103,7 +104,7 @@
 
 
             <doctitle><![CDATA[<h1>Arquitectura de software. Version:${version}</h1>]]></doctitle>
-            <bottom><![CDATA[<i>Copyright &#169; 2008 Only Solutions. All Rights Reserved.</i>]]></bottom>
+            <bottom><![CDATA[<i>2008 Only Solutions</i>]]></bottom>
         </javadoc>
     </target>
 
@@ -122,8 +123,8 @@
             <link href="http://jakarta.apache.org/commons/logging/apidocs/" />
 
 
-            <doctitle><![CDATA[<h1>Componente de Email de la Arquitectura. Version:${version}</h1>]]></doctitle>
-            <bottom><![CDATA[<i>Copyright &#169; 2008 Only Solutions. All Rights Reserved.</i>]]></bottom>
+            <doctitle><![CDATA[<h1>Componente de Email de JArq. Version:${version}</h1>]]></doctitle>
+            <bottom><![CDATA[<i>2008 Only Solutions</i>]]></bottom>
         </javadoc>
 
     </target>
@@ -143,8 +144,8 @@
            <link href="http://jakarta.apache.org/commons/logging/apidocs/" />
 
 
-           <doctitle><![CDATA[<h1>Componente de Email de la Arquitectura. Version:${version}</h1>]]></doctitle>
-           <bottom><![CDATA[<i>Copyright &#169; 2008 Only Solutions. All Rights Reserved.</i>]]></bottom>
+           <doctitle><![CDATA[<h1>Componente de Email de JArq. Version:${version}</h1>]]></doctitle>
+           <bottom><![CDATA[<i>2008 Only Solutions</i>]]></bottom>
        </javadoc>
    </target>
 
