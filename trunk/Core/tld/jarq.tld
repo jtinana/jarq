@@ -5,8 +5,8 @@
 	<tlib-version>1.1.2</tlib-version>
 	<jsp-version>1.2</jsp-version>
 	<short-name>Spring</short-name>
-	<uri>/tld/arquitectura.tld</uri>
-	<description>JSP TAg Libray de la Arquitectura de software de Datadviser</description>
+	<uri>/tld/jarq.tld</uri>
+	<description>JSP TAg Libray de JArq</description>
 
 	<tag>
 		<name>hasPermission</name>
