@@ -13,9 +13,9 @@ import java.io.InputStream;
 import java.util.Properties;
 
 /**
- * Implementaci�n concreta de la configuraci�n. Obtiene los parametros primero de la configuraci�n de base de datos,
- * y en caso de no existir, lo trata de obtener del fichero de configuraci�n.
- * En todos los m�todos se lanza una PropertyNotFoundException si la propiedad no existe.
+ * Implementacion concreta de la configuracion. Obtiene los parametros primero de la configuracion de base de datos,
+ * y en caso de no existir, lo trata de obtener del fichero de configuracion.
+ * En todos los motodos se lanza una PropertyNotFoundException si la propiedad no existe.
  *
  * @see es.onlysolutions.arq.core.configuration.exception.PropertyNotFoundException
  */
@@ -42,13 +42,13 @@ public class GestorConfiguracion
      * Constructor para el gestor. Spring instanciara la clase con los parametros adecuados en el constructor.
      *
      * @param dataSource           El datasource por el que obtener conexiones.
-     * @param table                La tabla de la base de datos de la que obtener la configuraci�n.
-     * @param keyColumn            La columna que se utilizar� como clave.
-     * @param valueColumn          La columna con el valor del par�metro.
-     * @param urlPropertyFile      URL al fichero de configuraci�n que cargar como fuente secundaria.
+     * @param table                La tabla de la base de datos de la que obtener la configuracion.
+     * @param keyColumn            La columna que se utilizaro como clave.
+     * @param valueColumn          La columna con el valor del parometro.
+     * @param urlPropertyFile      URL al fichero de configuracion que cargar como fuente secundaria.
      * @param urlLog4jPropertyFile Ruta al fichero de log4j.
      * @param applicationName      El nombre de la aplicacion actual.
-     * @throws ConfigurationException Si ocurre alg�n error al cargar la configuraci�n.
+     * @throws ConfigurationException Si ocurre algon error al cargar la configuracion.
      */
     public GestorConfiguracion(DataSource dataSource, String table, String keyColumn, String valueColumn, String urlPropertyFile, String urlLog4jPropertyFile, String applicationName) throws ConfigurationException
     {
@@ -125,9 +125,9 @@ public class GestorConfiguracion
             throw new PropertyNotFoundException("El nombre de la aplicacion no puede contener espacios");
         }
 
-        if (applicationName.indexOf('�') != -1 || applicationName.indexOf('�') != -1)
+        if (applicationName.indexOf("ñ") != -1 || applicationName.indexOf("ñ") != -1)
         {
-            throw new PropertyNotFoundException("El nombre de la aplicacion no puede contener la '�'");
+            throw new PropertyNotFoundException("El nombre de la aplicacion no puede contener la 'ñ'");
         }
 
         if (applicationName.indexOf('.') != -1)
@@ -143,10 +143,10 @@ public class GestorConfiguracion
     }
 
     /**
-     * Obtiene una propiedad de tipo String leida de la configuraci�n.
+     * Obtiene una propiedad de tipo String leida de la configuracion.
      *
      * @param propertyName El nombre de la propiedad a buscar.
-     * @return La propiedad obtenida de la configuraci�n con formato String.
+     * @return La propiedad obtenida de la configuracion con formato String.
      */
     static String getString(String propertyName)
     {
@@ -159,7 +159,7 @@ public class GestorConfiguracion
     }
 
     /**
-     * Obtiene una propiedad de tipo Integer de la configuraci�n.
+     * Obtiene una propiedad de tipo Integer de la configuracion.
      *
      * @param propertyName El nombre de la propiedad a buscar.
      * @return La propiedad en formato Integer.
@@ -175,7 +175,7 @@ public class GestorConfiguracion
     }
 
     /**
-     * Comprueba que la propiedad pasada como par�metro no sea nula.
+     * Comprueba que la propiedad pasada como parametro no sea nula.
      *
      * @param propertyName El nombre de la propiedad a comprobar.
      * @param propertyObj  El resultado de la propiedad.
@@ -184,7 +184,7 @@ public class GestorConfiguracion
     {
         if (propertyObj == null)
         {
-            throw new PropertyNotFoundException("La propiedad: " + propertyName + " no se encuentra en ninguna configuraci�n");
+            throw new PropertyNotFoundException("La propiedad: " + propertyName + " no se encuentra en ninguna configuracion");
         }
     }
 
@@ -200,7 +200,7 @@ public class GestorConfiguracion
     {
         if (paramValue == null)
         {
-            throw new PropertyNotFoundException("La propiedad: " + paramName + " se ha pasado nula. Revise la configuraci�n de Spring");
+            throw new PropertyNotFoundException("La propiedad: " + paramName + " se ha pasado nula. Revise la configuracion de Spring");
         }
         else if (paramValue instanceof String)
         {

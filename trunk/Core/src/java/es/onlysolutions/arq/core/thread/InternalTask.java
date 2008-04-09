@@ -9,7 +9,7 @@ import org.apache.commons.logging.Log;
  * Clase abstracta que maneja el ThreadManajer como Threads. Todos los Thread que se desee que sean
  * controlados desde el InternalTaskManager deben heredar de �sta clase.
  * Esta clase proporciona la logica necesaria para permitir la parada de los threads, de ahi el cambio en la nomenclatura.
- * Todas las tareas deberan introducir como condici�n de parada del Thread el m�todo #notInterrupted, adem�s de las que se consideren necearias.
+ * Todas las tareas deberan introducir como condici�n de parada del Thread el metodo #notInterrupted, ademas de las que se consideren necearias.
  *
  * @see #notInterrupted()
  * @see Thread
