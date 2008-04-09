@@ -64,8 +64,11 @@
     </target>
 
      <target name="javadocCore" description="Genera el javadoc del Core" >
-        <delete dir="${basedir}/docs/javadoc/Core" quiet="true"/>
-        <mkdir dir="${basedir}/docs/javadoc/Core"/>
+        <delete quiet="true">
+            <fileset dir="${basedir}/docs/javadoc/Core" excludes="*.svn">
+                <exclude name="**/*.svn-base" />
+            </fileset>
+        </delete>
 
         <javadoc destdir="${basedir}/docs/javadoc/Core" author="true" version="true" use="true" windowtitle="${ant.project.name}">
             <packageset dir="Core/src/java" defaultexcludes="yes">
@@ -109,8 +112,11 @@
     </target>
 
     <target name="javadocExcel" description="Genera el JavaDoc del componente de Excel">
-        <delete dir="${basedir}/docs/javadoc/Excel" quiet="true"/>
-        <mkdir dir="${basedir}/docs/javadoc/Excel"/>
+        <delete quiet="true">
+            <fileset dir="${basedir}/docs/javadoc/Core" excludes="*.svn">
+                <exclude name="**/*.svn-base" />
+            </fileset>
+        </delete>
 
         <javadoc destdir="${basedir}/docs/javadoc/Excel" author="true" version="true" use="true" windowtitle="${ant.project.name}">
             <packageset dir="Excel/src/java" defaultexcludes="yes">
@@ -130,8 +136,11 @@
     </target>
 
     <target name="javadocEmail" description="Genera el javadoc del Email" >
-       <delete  dir="${basedir}/docs/javadoc/Email" quiet="true"/>
-       <mkdir dir="${basedir}/docs/javadoc/Email"/>
+        <delete quiet="true">
+            <fileset dir="${basedir}/docs/javadoc/Core" excludes="*.svn">
+                <exclude name="**/*.svn-base" />
+            </fileset>
+        </delete>
 
        <javadoc destdir="${basedir}/docs/javadoc/Email" author="true" version="true" use="true" windowtitle="${ant.project.name}">
            <packageset dir="Email/src/java" defaultexcludes="yes">
