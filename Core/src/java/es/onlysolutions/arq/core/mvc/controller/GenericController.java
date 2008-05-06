@@ -182,8 +182,8 @@ public abstract class GenericController extends GlobalController
      * @param request  El HttpServletRequest.
      * @param response El HttpServletResponse.
      * @param command  El AbstractCommandBean.
-     * @param e        La BindException de esta petici�n.
-     * @throws Exception Cualquier excepci�n que ocurra durante la ejecuci�n de dicho m�todo.
+     * @param e        La BindException de esta peticion.
+     * @throws Exception Cualquier excepcion que ocurra durante la ejecucion de dicho metodo.
      */
     protected void doCargar(HttpServletRequest request, HttpServletResponse response, AbstractCommandBean command, BindException e) throws Exception
     {
@@ -203,8 +203,8 @@ public abstract class GenericController extends GlobalController
      * @param request  El HttpServletRequest.
      * @param response El HttpServletResponse.
      * @param command  El AbstractCommandBean.
-     * @param e        La BindException de esta petici�n.
-     * @throws Exception Cualquier excepci�n que ocurra durante la ejecuci�n de dicho m�todo.
+     * @param e        La BindException de esta peticion.
+     * @throws Exception Cualquier excepcion que ocurra durante la ejecucion de dicho metodo.
      */
     protected void doGuardar(HttpServletRequest request, HttpServletResponse response, AbstractCommandBean command, BindException e) throws Exception
     {
@@ -221,8 +221,8 @@ public abstract class GenericController extends GlobalController
      * @param request  El HttpServletRequest.
      * @param response El HttpServletResponse.
      * @param command  El AbstractCommandBean.
-     * @param e        La BindException de esta petici�n.
-     * @throws Exception Cualquier excepci�n que ocurra durante la ejecuci�n de dicho m�todo.
+     * @param e        La BindException de esta peticion.
+     * @throws Exception Cualquier excepcion que ocurra durante la ejecucion de dicho metodo.
      */
     protected void doBorrar(HttpServletRequest request, HttpServletResponse response, AbstractCommandBean command, BindException e) throws Exception
     {
@@ -239,8 +239,8 @@ public abstract class GenericController extends GlobalController
      * @param request       El HttpServletRequest.
      * @param response      El HttpServletResponse.
      * @param command       El AbstractCommandBean.
-     * @param bindException La BindException de esta petici�n.
-     * @throws Exception Cualquier excepci�n que ocurra durante la ejecuci�n de dicho m�todo.
+     * @param bindException La BindException de esta peticion.
+     * @throws Exception Cualquier excepcion que ocurra durante la ejecucion de dicho metodo.
      */
     protected void doListar(HttpServletRequest request, HttpServletResponse response, AbstractCommandBean command, BindException bindException) throws Exception
     {
@@ -264,7 +264,7 @@ public abstract class GenericController extends GlobalController
             dir = displayTagCommandBean.getDir();
             /**
              * Si se trata de un DisplayTagCommandBean y aparece el parametro de exportacion
-             * entonces estamos ante una exportacion, con lo que hay que asignar el tama�o de pagina
+             * entonces estamos ante una exportacion, con lo que hay que asignar el tamanyo de pagina
              * al parametro correspondiente
              */
             isExportAction = isExportDisplayTagAction(request);
@@ -282,7 +282,7 @@ public abstract class GenericController extends GlobalController
 
 
     /**
-     * Implementaci�n del m�todo onSubmit de Spring. Nuestra implementaci�n presupone que el command
+     * Implementacion del metodo onSubmit de Spring. Nuestra implementacion presupone que el command
      * bean es una subclase de AbstractCommandBean. Obtiene del bean la accion a ejecutar y ejecuta
      * el metodo correspondiente a dicha accion. Finalmente realiza un listado y finaliza delegando
      * el resultado en super.onSubmit.
@@ -290,9 +290,9 @@ public abstract class GenericController extends GlobalController
      * @param request       El HttpServletRequest.
      * @param response      El HttpServletResponse.
      * @param command       El Command Bean.
-     * @param bindException El BindException de la petici�n.
+     * @param bindException El BindException de la peticion.
      * @return El ModelAndView al que redirigir.
-     * @throws Exception Si ocurre alguna excepci�n durante la ejecuci�n.
+     * @throws Exception Si ocurre alguna excepcion durante la ejecucion.
      */
     @Override
     protected ModelAndView onSubmit(HttpServletRequest request, HttpServletResponse response, Object command, BindException bindException) throws Exception
@@ -333,7 +333,7 @@ public abstract class GenericController extends GlobalController
     /**
      * Sobreescribimos el formBackingObject para obligar a implementar el metodo loadPage.
      *
-     * @param request El HttpServletRequest de la petici�n.
+     * @param request El HttpServletRequest de la peticion.
      * @return El Command Bean con el que rellenar la pagina. null si no se desea precargar nada.
      * @throws Exception Si ocurre alguna excepcion durante el proceso.
      */
@@ -374,27 +374,27 @@ public abstract class GenericController extends GlobalController
 
 
     /**
-     * M�todo que devuelve el AbstractCommandBean que se utiliza para la carga de la p�gina. En �ste
+     * Metodo que devuelve el AbstractCommandBean que se utiliza para la carga de la pagina. En este
      * metodo se debe cargar el commandBean con todas las listas y datos necesarios para cargar la
-     * pagina sin errores, delegando el proceso de la peticion en el m�todo onSubmit.
+     * pagina sin errores, delegando el proceso de la peticion en el metodo onSubmit.
      *
-     * @param request El HttpServletRequest del que obtener los par�metros si son necesarios.
+     * @param request El HttpServletRequest del que obtener los parametros si son necesarios.
      *                Utilizar para ello la clase de Spring
      *                org.springframework.web.bind.ServletRequestUtils
      * @return El AbstractCommandBean con los datos, o null si no se desea precargar nada.
-     * @throws Exception Si ocurre alg�n error durante el proceso.
+     * @throws Exception Si ocurre algun error durante el proceso.
      * @see org.springframework.web.bind.ServletRequestUtils
      */
     protected abstract AbstractCommandBean loadPage(HttpServletRequest request) throws Exception;
 
 
     /**
-     * M�todo para buscar el par�metro asociado a la opci�n de exportaci�n. Dicho par�metro aparece
-     * en la sesi�n seg�n la expresi�n regular "d-XXXXX-e", por lo que se comprueba que el par�metro
+     * Metodo para buscar el parametro asociado a la opcion de exportacion. Dicho parametro aparece
+     * en la sesion segun la expresion regular "d-XXXXX-e", por lo que se comprueba que el parametro
      * empiece por los caracteres "d-" y finalice por "-e".
      *
-     * @param request El HttpServletRequest del que obtener los par�metros.
-     * @return TRUE si se ha encontrado el par�metro de exportaci�n, FLASE en caso contrario.
+     * @param request El HttpServletRequest del que obtener los parametros.
+     * @return TRUE si se ha encontrado el parametro de exportacion, FALSE en caso contrario.
      */
     private boolean isExportDisplayTagAction(HttpServletRequest request)
     {
