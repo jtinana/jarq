@@ -248,7 +248,7 @@ public class GlobalController extends SimpleFormController
 
     /**
      * Se intercepta todas las llamadas al controlador y se comprueba au autenticacion. En caso de
-     * ser v�lida se continua con la ejecucion normal, y si no es asi se redirige a una pantalla de
+     * ser valida se continua con la ejecucion normal, y si no es asi se redirige a una pantalla de
      * error de autorizacion.
      *
      * @param request             El HttpServletRequest de la peticion.
@@ -283,7 +283,7 @@ public class GlobalController extends SimpleFormController
                 { // El objeto es de tipo IUserSettings y no es nulo.
                     if (logger.isDebugEnabled())
                     {
-                        logger.debug("Autenticado con �xito.");
+                        logger.debug("Autenticado con exito.");
                     }
                     try
                     {
@@ -341,8 +341,7 @@ public class GlobalController extends SimpleFormController
      */
     private ModelAndView autorisationModelAndView()
     {
-        ModelAndView view = new ModelAndView(Configuracion.getString(CONF_AUTORISATION_PROPERTY));
-        return view;
+        return new ModelAndView(Configuracion.getString(CONF_AUTORISATION_PROPERTY));
     }
 
 
@@ -357,7 +356,7 @@ public class GlobalController extends SimpleFormController
     private ModelAndView authenticationModelAndView(int autenticationCodeError, HttpServletRequest request)
     {
         ModelAndView modelAndView = new ModelAndView(Configuracion.getString(CONF_AUTHENTICATION_PROPERTY));
-        modelAndView.addObject(VIEW_NAME_AUTHENTICATION_ERROR_CODE, new Integer(autenticationCodeError));
+        modelAndView.addObject(VIEW_NAME_AUTHENTICATION_ERROR_CODE, Integer.valueOf(autenticationCodeError));
 
         StringBuilder url = new StringBuilder(request.getRequestURI().length() * 2);
         url.append(request.getRequestURI());
@@ -379,7 +378,7 @@ public class GlobalController extends SimpleFormController
      * @param httpServletRequest  El HttpServletRequest de la peticion.
      * @param httpServletResponse El HttpServletResponse de la peticion.
      * @param object              El Bean objeto de la peticion.
-     * @param bindException       El BindException de la petici�n.
+     * @param bindException       El BindException de la peticion.
      * @return El ModelAndView al que redirigir.
      * @throws Exception Si ocurre cualquier error durante la ejecucion del metodo.
      */
@@ -394,9 +393,9 @@ public class GlobalController extends SimpleFormController
         catch (ValidationException ve)
         {
             List<ObjectError> list = ve.getAllErrors();
-            for (int i = 0; i < list.size(); i++)
+            for (ObjectError aList : list)
             {
-                bindException.addError(list.get(i));
+                bindException.addError(aList);
             }
             mav = showForm(httpServletRequest, httpServletResponse, bindException);
         }
@@ -427,7 +426,7 @@ public class GlobalController extends SimpleFormController
                     errores.add(error);
                 }
 
-                //Se a�aden los errores a la lista final de errores.
+                //Se insertan los errores a la lista final de errores.
                 if (handleErrors != null)
                 {
                     errores.addAll(handleErrors);
@@ -443,14 +442,14 @@ public class GlobalController extends SimpleFormController
     /**
      * Este metodo introduce una lista de errores en el bindException.
      *
-     * @param bindException El BindException de la petici�n.
-     * @param errores       Lista de errores producidos en la petici�n.
+     * @param bindException El BindException de la peticion.
+     * @param errores       Lista de errores producidos en la peticion.
      */
     private void addErrores(BindException bindException, List<ObjectError> errores)
     {
-        for (int i = 0; i < errores.size(); i++)
+        for (ObjectError errore : errores)
         {
-            bindException.addError(errores.get(i));
+            bindException.addError(errore);
         }
     }
 
