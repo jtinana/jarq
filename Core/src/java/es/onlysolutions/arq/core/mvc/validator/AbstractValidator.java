@@ -650,7 +650,7 @@ public abstract class AbstractValidator implements Validator
      * @param length      Longitud maxima del campo.
      * @param errors      Errores de validacion.
      * @param obligatorio Indica si se debe realizar la validacion de si el campo es obligatorio o no.
-     * @return true si no existe error alguno al terminar la ejecucion del metodo, false si se ha a�adido algun error durante el mismo.
+     * @return true si no existe error alguno al terminar la ejecucion del metodo, false si se ha anyadido algun error durante el mismo.
      */
     protected Boolean rejectIfEmptyOrWhiteEspaceOrLength(Errors errors, String valor, String campo, String nombre, int length, boolean obligatorio)
     {
