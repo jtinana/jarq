@@ -1,10 +1,11 @@
-#summary One-sentence summary of this page.
+#summary Initial requirements
 
 = Introduction =
 
-Requirements forn installation of JArq.
+Basic requirements for installation of JArq.
 
 = Details =
 
 The project is Spring and Hibernate based, so the only requirement to deploy *JArq* is to have a _Servlet Container_ (we recommend Apache Tomcat).
+
 All JAR dependencies are included in the distribution, under the *_lib_*`s directories. Read the documentation for more information about the use of this directories.
