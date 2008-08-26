@@ -1,8 +1,8 @@
 package es.onlysolutions.arq.core.mvc.ajax;
 
-import com.metaparadigm.jsonrpc.JSONRPCBridge;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
+import org.jabsorb.JSONRPCBridge;
 
 import java.util.Iterator;
 import java.util.Map;
@@ -33,16 +33,6 @@ public class JSONRPCBridgeWrapper
     public JSONRPCBridgeWrapper()
     {
         this.innerBridge = new JSONRPCBridge();
-    }
-
-    /**
-     * Constructor indicando si se deben utilizar lo Serializers por defecto.
-     *
-     * @param useDefaultSerializers flag de Default Serializers.
-     */
-    public JSONRPCBridgeWrapper(boolean useDefaultSerializers)
-    {
-        this.innerBridge = new JSONRPCBridge(useDefaultSerializers);
     }
 
     /**
