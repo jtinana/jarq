@@ -17,9 +17,9 @@ import java.util.Map;
 import java.util.Properties;
 
 /**
- * Aspecto para comprobar si el usuario logueado actualmente en la session tiene el permiso para la ejecuci�n
- * del m�todo del facade.
- * En caso de que un m�todo no est� definido en la configuraci�n se permite siempre su ejecuci�n.
+ * Aspecto para comprobar si el usuario logueado actualmente en la session tiene el permiso para la ejecucion
+ * del metodo del facade.
+ * En caso de que un metodo no este definido en la configuracion se permite siempre su ejecucion.
  * <b>Debe ejecutarse siempre previamente a cualquier inicio de advice de transaccionalidad</b>
  */
 public class AutorizationAdvice implements Ordered, MethodBeforeAdvice
@@ -45,7 +45,7 @@ public class AutorizationAdvice implements Ordered, MethodBeforeAdvice
     }
 
     /**
-     * M�todo que lee la configuraci�n de los permisos y prepara la clase para cachearlos.
+     * Metodo que lee la configuraci�n de los permisos y prepara la clase para cachearlos.
      *
      * @param permissionsFile El nombre del fichero a buscar en el classpath. Si se desea buscar desde la raiz se debe indicar un caracter '/' al comienzo del nombre.
      */
@@ -168,9 +168,9 @@ public class AutorizationAdvice implements Ordered, MethodBeforeAdvice
     }
 
     /**
-     * Establecemos que �ste aspecto tenga la mayor preferencia para no comenzar la transaccion antes de verificar si se debe autorizar su ejecuci�n.
+     * Establecemos que este aspecto tenga la mayor preferencia para no comenzar la transaccion antes de verificar si se debe autorizar su ejecucion.
      *
-     * @return El �rden de �ste Aspecto, en este caso el mayor posible.
+     * @return El orden de este Aspecto, en este caso el mayor posible.
      */
     public int getOrder()
     {
@@ -180,10 +180,10 @@ public class AutorizationAdvice implements Ordered, MethodBeforeAdvice
     /**
      * Ejecucion previa al metodo. Se comprueba si se tiene autorizacion para su ejecucion.
      *
-     * @param method El nombre del m�todo que se va a ejecutar.
-     * @param args   Los argumentos del m�todo.
-     * @param target El objeto cuyo m�todo se va ejecutar.
-     * @throws Throwable Cualquier excepcion que ocurra durante la ejecucion del m�todo.
+     * @param method El nombre del metodo que se va a ejecutar.
+     * @param args   Los argumentos del metodo.
+     * @param target El objeto cuyo metodo se va ejecutar.
+     * @throws Throwable Cualquier excepcion que ocurra durante la ejecucion del metodo.
      */
     public void before(Method method, Object[] args, Object target) throws Throwable
     {
