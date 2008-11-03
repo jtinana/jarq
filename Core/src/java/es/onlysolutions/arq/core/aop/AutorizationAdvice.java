@@ -12,7 +12,6 @@ import org.springframework.core.Ordered;
 import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Method;
-import java.util.Iterator;
 import java.util.Map;
 import java.util.Properties;
 
@@ -45,7 +44,7 @@ public class AutorizationAdvice implements Ordered, MethodBeforeAdvice
     }
 
     /**
-     * Metodo que lee la configuraci�n de los permisos y prepara la clase para cachearlos.
+     * Metodo que lee la configuracion de los permisos y prepara la clase para cachearlos.
      *
      * @param permissionsFile El nombre del fichero a buscar en el classpath. Si se desea buscar desde la raiz se debe indicar un caracter '/' al comienzo del nombre.
      */
@@ -72,10 +71,9 @@ public class AutorizationAdvice implements Ordered, MethodBeforeAdvice
          */
         int correctPermissions = 0;
         int errorPermissions = 0;
-        Iterator itProps = permissions.entrySet().iterator();
-        while (itProps.hasNext())
+        
+        for (Map.Entry<Object, Object> entry : permissions.entrySet())
         {
-            Map.Entry entry = (Map.Entry) itProps.next();
 
             String permissionEntry = (String) entry.getKey();
             if (checkPermissionEntry(permissionEntry))
