@@ -4,8 +4,8 @@ import es.onlysolutions.arq.core.log.LoggerGenerator;
 import org.apache.commons.logging.Log;
 
 /**
- * Clase con m�todos est�ticos para obtener los par�metros de la configuraci�n.
- * Delega toda la l�gica en la clase GestorConfiguracion.
+ * Clase con metodos estaticos para obtener los parametros de la configuracion.
+ * Delega toda la logica en la clase GestorConfiguracion.
  * En caso de no encontrar una propieda se obtiene una PropertyNotFoundException.
  *
  * @see es.onlysolutions.arq.core.configuration.GestorConfiguracion
@@ -20,12 +20,12 @@ public class Configuracion
     private static final Log logger = LoggerGenerator.getLogger(Configuracion.class);
 
     /**
-     * M�todo para obtener una propiedad de tipo String.
+     * Metodo para obtener una propiedad de tipo String.
      *
      * @param propertyName El nombre de la propiedad.
      * @return El valor de la propiedad.
      */
-    public static final String getString(String propertyName)
+    public static String getString(String propertyName)
     {
         String propValue = GestorConfiguracion.getString(propertyName);
 
@@ -38,12 +38,12 @@ public class Configuracion
     }
 
     /**
-     * M�todo para obtener una propiedad de tipo String.
+     * Metodo para obtener una propiedad de tipo String.
      *
      * @param propertyName El nombre de la propiedad.
      * @return El valor de la propiedad.
      */
-    public static final Integer getInteger(String propertyName)
+    public static Integer getInteger(String propertyName)
     {
         Integer intValue = GestorConfiguracion.getInteger(propertyName);
 
@@ -56,12 +56,12 @@ public class Configuracion
     }
 
     /**
-     * Obtiene una propiedad por su nombre. �ste metodo se utiliza como puente con la
-     * antigua configuraci�n. Ser� eliminado en posteriores versiones de la aplicaci�n.
+     * Obtiene una propiedad por su nombre. este metodo se utiliza como puente con la
+     * antigua configuracion. Sera eliminado en posteriores versiones de la aplicacion.
      *
      * @param propertyName El nombre de la propiedad.
      * @return La propiedad como un String.
-     * @deprecated Utilizar los m�todos concretos por tipo expuestos en �sta misma clase.
+     * @deprecated Utilizar los metodos concretos por tipo expuestos en esta misma clase.
      */
     public static String getPropiedad(String propertyName)
     {
@@ -76,13 +76,13 @@ public class Configuracion
     }
 
     /**
-     * Obtiene una propiedad booleana de la configuraci�n. Realiza una conversi�n de la siguiente forma:<br>
+     * Obtiene una propiedad booleana de la configuracion. Realiza una conversion de la siguiente forma:<br>
      * Devuelve true si la propiedad es el literal 'true', 'verdadero', '1', 'si'<br>
      * Devuelve false en cualquier otro caso.
      * Tener en cuenta que es case sesitive.
      *
      * @param propertyName El nombre de la propiedad a obtener.
-     * @return El valor booleano convertido segun la especificaci�n del m�todo.
+     * @return El valor booleano convertido segun la especificacion del metodo.
      */
     public static boolean getBoolean(String propertyName)
     {

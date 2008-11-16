@@ -10,6 +10,8 @@ import org.springframework.beans.factory.BeanCreationException;
 import javax.sql.DataSource;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.Properties;
 
 /**
@@ -25,6 +27,11 @@ public class GestorConfiguracion
      * Configuracion compuesta de la que obtener las propiedades. Se instancia sin parametros.
      */
     private static final CompositeConfiguration compositeConfiguration = new CompositeConfiguration();
+
+    /**
+     * Mapa para el cacheo de las propiedades.
+     */
+    private static final Map<String,Object> cachedProperties = new HashMap<String, Object>(17);
 
     /**
      * Constante que se inicializara con el nombre de la aplicacion.
@@ -125,7 +132,7 @@ public class GestorConfiguracion
             throw new PropertyNotFoundException("El nombre de la aplicacion no puede contener espacios");
         }
 
-        if (applicationName.indexOf("ñ") != -1 || applicationName.indexOf("ñ") != -1)
+        if (applicationName.indexOf("ñ") != -1 || applicationName.indexOf("Ñ") != -1)
         {
             throw new PropertyNotFoundException("El nombre de la aplicacion no puede contener la 'ñ'");
         }
@@ -152,8 +159,16 @@ public class GestorConfiguracion
     {
         String rVal;
 
-        rVal = compositeConfiguration.getString(propertyName);
-        checkPropertyNotNull(propertyName, rVal);
+        if( cachedProperties.containsKey(propertyName) )
+        {
+            rVal = (String) cachedProperties.get(propertyName);
+        }
+        else
+        {
+            rVal = compositeConfiguration.getString(propertyName);
+            checkPropertyNotNull(propertyName, rVal);
+        }
+
 
         return rVal;
     }
@@ -168,8 +183,15 @@ public class GestorConfiguracion
     {
         Integer rVal;
 
-        rVal = compositeConfiguration.getInteger(propertyName, null);
-        checkPropertyNotNull(propertyName, rVal);
+        if( cachedProperties.containsKey(propertyName) )
+        {
+            rVal = (Integer) cachedProperties.get(propertyName);
+        }
+        else
+        {
+            rVal = compositeConfiguration.getInteger(propertyName, null);
+            checkPropertyNotNull(propertyName, rVal);
+        }
 
         return rVal;
     }
@@ -220,5 +242,13 @@ public class GestorConfiguracion
     static String getApplicationName()
     {
         return APPLICATION_NAME;
+    }
+
+    /**
+     * Borra la cache de propiedades.
+     */
+    static void resetCache()
+    {
+        cachedProperties.clear();
     }
 }
