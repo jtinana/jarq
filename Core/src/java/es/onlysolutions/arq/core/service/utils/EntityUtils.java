@@ -49,14 +49,14 @@ public final class EntityUtils
             Object[] param = {null};
             try
             {
-                for (int i = 0; i < metodos.length; i++)
+                for (Method metodo : metodos)
                 {
-                    if (metodos[i].getName().startsWith("get"))
+                    if (metodo.getName().startsWith("get"))
                     {
-                        nombre = metodos[i].getName().substring(metodos[i].getName().indexOf("get") + 3);
-                        if ((metodos[i].getReturnType() == String.class))
+                        nombre = metodo.getName().substring(metodo.getName().indexOf("get") + 3);
+                        if ((metodo.getReturnType() == String.class))
                         {
-                            valor = (String) metodos[i].invoke(obj);
+                            valor = (String) metodo.invoke(obj);
                             if ("".equals(valor))
                             {
                                 metodoSet = obtenerMetodoSet(metodos, nombre);
@@ -95,7 +95,7 @@ public final class EntityUtils
     {
         if (logger.isDebugEnabled())
         {
-            logger.debug("Vamos a buscar el setter para el atributo: " + nombre + " en la lista de metodos: " + metodos);
+            logger.debug("Vamos a buscar el setter para el atributo: " + nombre + " en la lista de metodos: " + Arrays.toString(metodos));
         }
 
         int i = 0;
@@ -174,15 +174,14 @@ public final class EntityUtils
         if (listToClone != null)
         {
             result = new ArrayList(listToClone.size());
-            for (int index = 0; index < listToClone.size(); index++)
+            for (Object element : listToClone)
             {
-                Object element = listToClone.get(index);
                 if (element != null)
                 {
                     try
                     {
-                        Method method = element.getClass().getMethod("clone", null);
-                        result.add(method.invoke(element, null));
+                        Method method = element.getClass().getMethod("clone", new Class<?>[]{null});
+                        result.add(method.invoke(element, new Object[]{null}));
                     }
                     catch (NoSuchMethodException e)
                     {
@@ -385,9 +384,8 @@ public final class EntityUtils
                 BeanInfo beanInfo = Introspector.getBeanInfo(entityIdResult.getClass());
                 PropertyDescriptor[] propertyDescriptor = beanInfo.getPropertyDescriptors();
 
-                for (int index = 0; index < propertyDescriptor.length; index++)
+                for (PropertyDescriptor descriptor : propertyDescriptor)
                 {
-                    PropertyDescriptor descriptor = propertyDescriptor[index];
                     loadEmptyEntity(entityIdResult, descriptor);
                 }
             }
@@ -432,7 +430,7 @@ public final class EntityUtils
         if (IEntityId.class.isAssignableFrom(descriptor.getPropertyType()))
         {
             Method method = descriptor.getReadMethod();
-            Object methodInvocationResult = method.invoke(entityId, null);
+            Object methodInvocationResult = method.invoke(entityId, new Object[]{null});
 
             if (methodInvocationResult == null)//Tenemos que cargar una entidad vacia.
             {
