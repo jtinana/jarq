@@ -33,7 +33,7 @@ public abstract class SQLFilter extends AbstractFilter
     }
 
     /**
-     * Array de restricciones a�adidas al filtro.
+     * Array de restricciones introducidas en el filtro.
      */
     private List<SQLRestriction> restrictions = new ArrayList<SQLRestriction>(7);
 
@@ -61,7 +61,7 @@ public abstract class SQLFilter extends AbstractFilter
     }
 
     /**
-     * Clausula SQL a la que se iran a�adiendo las restricciones.
+     * Clausula SQL a la que se iran insertandose las restricciones.
      */
     private String sqlClause;
 
@@ -122,7 +122,7 @@ public abstract class SQLFilter extends AbstractFilter
         sb.append(this.sqlClause);
 
         /**
-         * A�adimos las condiciones estaticas.
+         * Insertamos las condiciones estaticas.
          */
 
         boolean whereAdded = false;
@@ -132,9 +132,8 @@ public abstract class SQLFilter extends AbstractFilter
             sb.append(" WHERE 1=1 ");
             whereAdded = true;
 
-            for (int index = 0; index < staticRestrictions.size(); index++)
+            for (SQLRestriction sqlRestriction : staticRestrictions)
             {
-                SQLRestriction sqlRestriction = staticRestrictions.get(index);
                 sb.append(sqlRestriction.getSQL());
                 sb.append(' ');
             }
@@ -149,9 +148,8 @@ public abstract class SQLFilter extends AbstractFilter
                     sb.append(" WHERE 1=1 ");
                 }
 
-                for (int index = 0; index < this.restrictions.size(); index++)
+                for (SQLRestriction sqlRestriction : this.restrictions)
                 {
-                    SQLRestriction sqlRestriction = this.restrictions.get(index);
                     sb.append(sqlRestriction.getSQL());
                     sb.append(' ');
                 }
@@ -227,14 +225,13 @@ public abstract class SQLFilter extends AbstractFilter
      * Establece los parametros en funcion de si es para contar o para obtener una pagina de resultados.
      *
      * @param isForCount Flag indicando si es para realizar un count o no.
-     * @param query      La query donde a�adir las restricciones.
+     * @param query      La query donde insertar las restricciones.
      */
     private void setParams(SQLQuery query, boolean isForCount)
     {
         int paramPosition = 0;
-        for (int index = 0; index < staticRestrictions.size(); index++)
+        for (SQLRestriction restriction : staticRestrictions)
         {
-            SQLRestriction restriction = staticRestrictions.get(index);
             for (int indexParam = 0; indexParam < restriction.getParams().size(); indexParam++)
             {
                 query.setParameter(paramPosition, restriction.getParams().get(indexParam));
@@ -249,13 +246,12 @@ public abstract class SQLFilter extends AbstractFilter
         }
 
         /**
-         * A�adimos las restricciones si no es para realizar la cuenta total.
+         * Insertamos las restricciones si no es para realizar la cuenta total.
          */
         if (!isForCount)
         {
-            for (int index = 0; index < restrictions.size(); index++)
+            for (SQLRestriction restriction : restrictions)
             {
-                SQLRestriction restriction = restrictions.get(index);
                 for (int indexParam = 0; indexParam < restriction.getParams().size(); indexParam++)
                 {
                     query.setParameter(paramPosition, restriction.getParams().get(indexParam));
