@@ -1,4 +1,4 @@
-#How JArq configure your application easily
+How JArq configure your application easily
 
 = Firts step =
 
