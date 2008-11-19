@@ -11,21 +11,21 @@ Just define a bean for the class GestorConfiguracion passing the rights argument
 An example is:
 
 <bean id="gestorConfiguracion" class="es.onlysolutions.arq.core.configuration.GestorConfiguracion">
-         <!--DataSource to access the configuration table-->
-        <constructor-arg ref="dataSource"/>
-         <!--Table name-->
-        <constructor-arg value="t_configuration" />
-         <!--Column for the property name-->
-        <constructor-arg  value="propertyname" />
-         <!--Column value -->
-        <constructor-arg value="value" />
-         <!--Property file-->
-        <constructor-arg value="/myproperties.cfg" />
-        <!--Alternative log4j file-->
-        <constructor-arg value="/loggingLog4j.cfg" />
-         <!--App name-->
-        <constructor-arg value="MyAppName" />
-    </bean>
+    <!--DataSource to access the configuration table-->
+  <constructor-arg ref="dataSource"/>
+    <!--Table name-->
+  <constructor-arg value="t_configuration" />
+    <!--Column for the property name-->
+  <constructor-arg  value="propertyname" />
+    <!--Column value -->
+  <constructor-arg value="value" />
+    <!--Property file-->
+  <constructor-arg value="/myproperties.cfg" />
+    <!--Alternative log4j file-->
+  <constructor-arg value="/loggingLog4j.cfg" />
+    <!--App name-->
+  <constructor-arg value="MyAppName" />
+</bean>
 
 With this configuration you tells the GestorConfiguracion that reads all properties from the database table "t_configuration", and if the property is not found, will look at the properties file "myproperties.cfg", at the root of the classpath.
 
