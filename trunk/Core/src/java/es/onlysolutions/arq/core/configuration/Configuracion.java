@@ -88,14 +88,7 @@ public class Configuracion
     {
         String strValue = GestorConfiguracion.getString(propertyName).toLowerCase();
 
-        if ("1".equals(strValue) || "true".equals(propertyName) || "si".equals(propertyName) || "verdadero".equals(propertyName))
-        {
-            return true;
-        }
-        else
-        {
-            return false;
-        }
+        return "1".equals(strValue) || "true".equals(propertyName) || "si".equals(propertyName) || "verdadero".equals(propertyName);
 
     }
 
