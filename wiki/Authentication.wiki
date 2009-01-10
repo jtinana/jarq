@@ -2,7 +2,7 @@
 
 = Introduction =
 
-There are many projects that allows you to implement the authentication into your app. Of course, you can use any of them with JArq, just ignore this, and mark your global controller with the authentication flag as *false*.
+There are many projects that allows you to implement the authentication into your app. Of course, you can use any of them with JArq, just ignore this, and mark your global controller with the [http://jarq.es/api/Core/es/onlysolutions/arq/core/mvc/controller/GlobalController.html#setAuthenticationEnabled(boolean) authentication flag] as *false*.
 
 = IUserSettings =
 
