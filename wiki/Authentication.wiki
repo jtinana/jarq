@@ -8,9 +8,9 @@ There are many projects that allows you to implement the authentication into you
 
 This interface provides JArq all the information that needs to handles with the authentication (and later, as you will see, will autorization too).
 
-You need to code your own class that implements this interface, and a login controller that introduce your objet into the HttpSession under e key *IUserSettings.USER_SETTINGS_ATTRIBUTE_NAME*.
+You need to code your own class that implements this interface, and a login controller that introduce your objet into the HttpSession under e key [http://jarq.es/api/Core/es/onlysolutions/arq/core/auth/IUserSettings.html#USER_SETTINGS_ATTRIBUTE_NAME *IUserSettings.USER_SETTINGS_ATTRIBUTE_NAME*].
 
-Actually, you need to implements your own LoginController and your own LoginValidator (or similar) to check the auth token and construct your [http://jarq.es/api/Core/es/onlysolutions/arq/core/auth/IUserSettings.html#USER_SETTINGS_ATTRIBUTE_NAME IUserSettings] object.
+Actually, you need to implements your own LoginController and your own LoginValidator (or similar) to check the auth token and construct your [http://jarq.es/api/Core/es/onlysolutions/arq/core/auth/IUserSettings.html IUserSettings] object.
 
 = GenericController =
 
