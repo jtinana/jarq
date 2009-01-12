@@ -14,7 +14,7 @@ Just pay attention to some details to easily coding your webapp.
 
   * All your controllers should extends the GenericController class unless you know what are you doing.
 
-  * It´s recommended that you follow the patterns that JArq gives you at the starting point. Naming all facade`s method with clarify names and starting the read-only ones with *get* prefix (also in the DAO's ones). This will facilitate you work to introduce later some AOP funcionallity, like the Memcache Advice.
+  * It´s recommended that you follow the patterns that JArq gives you at the starting point. Naming all facade`s method with clarify names and starting the read-only ones with *get* prefix (also in the DAO's ones). This will make it easier you work to introduce later some AOP funcionallity, like the Memcache Advice.
 
   * Define your facade interfaces in different packages from the implementations. The txt AOP and others and so much efficient if they only needs to envolve the interfaces.
 
