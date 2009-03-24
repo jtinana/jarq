@@ -22,14 +22,14 @@ public class AbstractJdbcDao
     protected final Log logger = LoggerGenerator.getLogger(this.getClass());
 
     /**
-     * El datasource a establecer por la configuraci�n de Spring.
+     * El datasource a establecer por la configuracion de Spring.
      */
     private DataSource datasource;
 
     /**
      * Establece el DataSource.<br>
-     * Es llamado autom�ticamente por el IoC de Spring.<br>
-     * <b>Nunca debe ser llamado desde el propio c�digo.</b>
+     * Es llamado automaticamente por el IoC de Spring.<br>
+     * <b>Nunca debe ser llamado desde el propio codigo.</b>
      *
      * @param datasource El datasource a establecer.
      */
@@ -43,7 +43,7 @@ public class AbstractJdbcDao
      *
      * @param cpt El CachedPreparedStatement con los argumentos a ejecutar.
      * @return El ResultSet
-     * @throws DaoException Si ocurre algun error durante la ejecuci�n del m�todo.
+     * @throws DaoException Si ocurre algun error durante la ejecucion del metodo.
      */
     protected ResultSet executeQuery(CachedPreparedStatement cpt) throws DaoException
     {
