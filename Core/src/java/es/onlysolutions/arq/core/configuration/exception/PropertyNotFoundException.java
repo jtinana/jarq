@@ -1,7 +1,7 @@
 package es.onlysolutions.arq.core.configuration.exception;
 
 /**
- * Excepci�n lanzada en caso de que una propiedad no sea encontrada ni en la configuracion
+ * Excepcion lanzada en caso de que una propiedad no sea encontrada ni en la configuracion
  * de la base de datos ni en la coniguracion del fichero de propiedades.
  */
 public class PropertyNotFoundException extends RuntimeException

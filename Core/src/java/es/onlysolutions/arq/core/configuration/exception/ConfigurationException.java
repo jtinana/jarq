@@ -1,7 +1,7 @@
 package es.onlysolutions.arq.core.configuration.exception;
 
 /**
- * Excepci�n general de error en el componente de configuraci�n.
+ * Excepcion general de error en el componente de configuracion.
  */
 public class ConfigurationException extends RuntimeException
 {
