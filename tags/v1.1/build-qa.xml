@@ -1,0 +1,432 @@
+<?xml version="1.0" encoding="iso-8859-1" ?>
+<project default="">
+
+    <property file="build.properties"/>
+
+    <tstamp>
+        <format property="FECHA_HOY" pattern="dd/MMM/yyyy"/>
+    </tstamp>
+
+    <tstamp>
+        <format property="HORA_HOY" pattern="HH:mm:ss"/>
+    </tstamp>
+
+    <macrodef name="compilar-clases">
+        <attribute name="root-dir" default="${basedir}/.."/>
+        <attribute name="build" default="${basedir}/build"/>
+        <attribute name="debug" default="true"/>
+        <attribute name="debuglevel" default="source,lines,vars"/>
+        <attribute name="src" default="${basedir}/src/java"/>
+        <attribute name="dist" default="@{root-dir}/dist"/>
+        <attribute name="build-lib" default="@{root-dir}/build-lib"/>
+
+        <sequential>
+            <javac debug="@{debug}" debuglevel="@{debuglevel}" destdir="@{build}">
+                <src location="@{src}"/>
+                <exclude name="**/*Test.java"/>
+                <exclude name="**/Test*.java"/>
+                <classpath>
+                    <fileset dir="${basedir}" includes="*lib/*.jar"/>
+                    <fileset dir="@{dist}" includes="*.jar"/>
+                    <fileset dir="@{build-lib}" includes="*.jar"/>
+                </classpath>
+            </javac>
+            <echo file="@{root-dir}/compiled-files.txt" append="true" message="@{src}/**/*.java${line.separator}"/>
+        </sequential>
+    </macrodef>
+
+    <macrodef name="copiar-recursos">
+        <attribute name="build" default="${basedir}/build"/>
+        <attribute name="resources" default="${basedir}/src/resources"/>
+        <sequential>
+            <mkdir dir="@{resources}"/>
+            <copy todir="@{build}">
+                <fileset dir="@{resources}">
+                    <include name="**/*"/>
+                </fileset>
+            </copy>
+        </sequential>
+    </macrodef>
+
+    <macrodef name="instrumentar-clases">
+        <attribute name="root-dir" default="${basedir}/.."/>
+        <attribute name="test-lib" default="@{root-dir}/test-lib"/>
+        <attribute name="build" default="${basedir}/build"/>
+        <attribute name="build-instrumented" default="${basedir}/build-instrumented"/>
+        <element name="exclusiones" optional="true"/>
+        <sequential>
+            <taskdef classpath="@{test-lib}/jcoverage.jar" resource="tasks.properties"/>
+            <instrument todir="@{build-instrumented}">
+                <fileset dir="@{build}">
+                    <include name="**/*.class"/>
+                    <exclusiones/>
+                </fileset>
+            </instrument>
+        </sequential>
+    </macrodef>
+
+    <macrodef name="call-findbugs">
+        <attribute name="root-dir" default="${basedir}/.."/>
+        <attribute name="dist" default="@{root-dir}/dist"/>
+        <attribute name="test-lib" default="@{root-dir}/test-lib"/>
+        <attribute name="build-lib" default="@{root-dir}/build-lib"/>
+        <attribute name="build" default="${basedir}/build"/>
+        <attribute name="findbugs-results" default="@{root-dir}/reports/findbugs-results"/>
+        <sequential>
+            <property name="fbpath" location="@{test-lib}/findbugs-0.9.3"/>
+            <property name="fboutputfile" location="@{findbugs-results}/${ant.project.name}.html"/>
+            <taskdef name="findbugs" classname="edu.umd.cs.findbugs.anttask.FindBugsTask">
+                <classpath path="${fbpath}/lib/findbugs-ant.jar"/>
+            </taskdef>
+            <mkdir dir="@{findbugs-results}"/>
+            <findbugs home="${fbpath}" output="html" stylesheet="${fbpath}/xsl/red.es.xsl" outputFile="${fboutputfile}">
+                <auxClasspath>
+                    <fileset dir="${basedir}" includes="*lib/*.jar"/>
+                    <fileset dir="@{dist}" includes="*.jar"/>
+                    <fileset dir="@{build-lib}" includes="*.jar"/>
+                </auxClasspath>
+                <class location="@{build}"/>
+            </findbugs>
+        </sequential>
+    </macrodef>
+
+    <macrodef name="compilar-tests">
+        <attribute name="root-dir" default="${basedir}/.."/>
+        <attribute name="build-test" default="${basedir}/build-test"/>
+        <attribute name="debug" default="true"/>
+        <attribute name="debuglevel" default="source,lines,vars"/>
+        <attribute name="src-test" default="${basedir}/src/test"/>
+        <attribute name="test-lib" default="@{root-dir}/test-lib"/>
+        <attribute name="dist" default="@{root-dir}/dist"/>
+        <attribute name="build-lib" default="@{root-dir}/build-lib"/>
+        <attribute name="build" default="${basedir}/build"/>
+        <sequential>
+            <javac debug="@{debug}" debuglevel="@{debuglevel}" destdir="@{build-test}">
+                <src location="@{src-test}"/>
+                <classpath>
+                    <pathelement location="@{build}"/>
+                    <!-- Las clases del proyecto, por si no se genera JAR -->
+                    <fileset dir="@{test-lib}">
+                        <include name="*.jar"/>
+                        <include name="**/*.jar"/>
+                    </fileset>
+                    <fileset dir="${basedir}" includes="*lib/*.jar"/>
+                    <fileset dir="@{dist}" includes="*.jar"/>
+                    <fileset dir="@{build-lib}" includes="*.jar"/>
+                </classpath>
+            </javac>
+        </sequential>
+    </macrodef>
+
+    <macrodef name="copiar-recursos-test">
+        <attribute name="build-test" default="${basedir}/build-test"/>
+        <attribute name="test-resources" default="${basedir}/src/test-resources"/>
+        <sequential>
+            <mkdir dir="@{test-resources}"/>
+            <copy todir="@{build-test}">
+                <fileset dir="@{test-resources}"/>
+            </copy>
+        </sequential>
+    </macrodef>
+
+    <macrodef name="crear-jar">
+        <attribute name="root-dir" default="${basedir}/.."/>
+        <attribute name="dist" default="@{root-dir}/dist"/>
+        <attribute name="build" default="${basedir}/build"/>
+        <sequential>
+            <jar jarfile="@{dist}/${ant.project.name}-${version}.jar" basedir="@{build}">
+                <manifest>
+                    <attribute name="Implementation-Title" value="${ant.project.name}; ${FECHA_HOY}; ${HORA_HOY}"/>
+                    <attribute name="Implementation-Version" value="${version}; ${uid}"/>
+                </manifest>
+            </jar>
+        </sequential>
+    </macrodef>
+
+    <macrodef name="crear-jar-metainf" description="Crea un JAR introduciendo en su directorio META-INF los ficheros de la ruta tldDir" >
+        <attribute name="root-dir" default="${basedir}/.."/>
+        <attribute name="dist" default="@{root-dir}/dist"/>
+        <attribute name="build" default="${basedir}/build"/>
+        <attribute name="tldDir" />
+        <sequential>
+            <jar jarfile="@{dist}/${ant.project.name}-${version}.jar" basedir="@{build}">
+                <metainf dir="@{tldDir}" >
+                    <include name="**/*" />
+                </metainf>
+                <manifest>
+                    <attribute name="Implementation-Title" value="${ant.project.name}; ${FECHA_HOY}; ${HORA_HOY}"/>
+                    <attribute name="Implementation-Version" value="${version}; ${uid}"/>
+                </manifest>
+            </jar>
+        </sequential>
+    </macrodef>
+
+    <macrodef name="crear-zip">
+        <attribute name="root-dir" default="${basedir}/.."/>
+        <attribute name="dist" default="@{root-dir}/dist"/>
+        <attribute name="zipfilename" default="${ant.project.name}.zip"/>
+        <attribute name="zipfile" default="@{dist}/@{zipfilename}"/>
+        <element name="zipcontent" implicit="yes"/>
+        <sequential>
+            <zip destfile="@{zipfile}">
+                <zipcontent/>
+            </zip>
+        </sequential>
+    </macrodef>
+
+    <macrodef name="crear-war">
+        <attribute name="root-dir" default="${basedir}/.."/>
+        <attribute name="dist" default="@{root-dir}/dist"/>
+        <attribute name="build" default="${basedir}/build"/>
+        <attribute name="srcweb" default="${basedir}/src/web"/>
+        <sequential>
+            <war destfile="@{dist}/${ant.project.name}.war"
+                 basedir="@{srcweb}"
+                 webxml="@{srcweb}/WEB-INF/web.xml"
+                 excludes="WEB-INF/**">
+                <webinf dir="@{srcweb}/WEB-INF">
+                    <exclude name="classes/*"/>
+                    <exclude name="web.xml"/>
+                </webinf>
+                <classes dir="@{build}"></classes>
+                <lib dir="@{dist}" includes="*.jar" excludes="${ant.project.name}-${version}.jar"/>
+            </war>
+        </sequential>
+    </macrodef>
+
+    <macrodef name="limpieza">
+        <attribute name="root-dir" default="${basedir}/.."/>
+        <attribute name="dist" default="@{root-dir}/dist"/>
+        <attribute name="build-test" default="${basedir}/build-test"/>
+        <attribute name="build" default="${basedir}/build"/>
+        <attribute name="build-instrumented" default="${basedir}/build-instrumented"/>
+        <sequential>
+            <delete dir="@{build}" includeEmptyDirs="true"/>
+            <delete dir="@{build-instrumented}" includeEmptyDirs="true"/>
+            <delete dir="@{build-test}" includeEmptyDirs="true"/>
+            <delete file="@{dist}/${ant.project.name}-${version}.jar"/>
+            <delete file="@{dist}/${ant.project.name}.war"/>
+            <delete file="@{dist}/${ant.project.name}-${version}.zip"/>
+            <delete file="jcoverage.ser"/>
+            <delete file="@{root-dir}/compiled-files.txt"/>
+        </sequential>
+    </macrodef>
+
+    <macrodef name="inicializacion">
+        <attribute name="root-dir" default="${basedir}/.."/>
+        <attribute name="dist" default="@{root-dir}/dist"/>
+        <attribute name="build-test" default="${basedir}/build-test"/>
+        <attribute name="build-instrumented" default="${basedir}/build-instrumented"/>
+        <attribute name="build" default="${basedir}/build"/>
+        <sequential>
+            <mkdir dir="@{build}"/>
+            <mkdir dir="@{build-instrumented}"/>
+            <mkdir dir="@{build-test}"/>
+            <mkdir dir="@{dist}"/>
+        </sequential>
+    </macrodef>
+
+    <macrodef name="qa">
+        <attribute name="root-dir" default="${basedir}/.."/>
+        <attribute name="dist" default="@{root-dir}/dist"/>
+        <attribute name="test-lib" default="@{root-dir}/test-lib"/>
+        <attribute name="test-tomcat" default="@{root-dir}/test-tomcat"/>
+        <attribute name="test-results" default="@{root-dir}/reports/test-results"/>
+        <attribute name="findbugs-results" default="@{root-dir}/reports/findbugs-results"/>
+        <attribute name="build" default="${basedir}/build"/>
+        <attribute name="build-instrumented" default="${basedir}/build-instrumented"/>
+        <attribute name="build-test" default="${basedir}/build-test"/>
+        <attribute name="build-lib" default="@{root-dir}/build-lib"/>
+        <element name="excluir-instrumentacion" optional="true"/>
+        <sequential>
+            <call-findbugs root-dir="@{root-dir}"
+                           build="@{build}"
+                           build-lib="@{build-lib}"
+                           dist="@{dist}"
+                           test-lib="@{test-lib}"
+                           findbugs-results="@{findbugs-results}"/>
+
+            <instrumentar-clases test-lib="@{test-lib}" build="@{build}" build-instrumented="@{build-instrumented}">
+                <exclusiones>
+                    <excluir-instrumentacion/>
+                </exclusiones>
+            </instrumentar-clases>
+
+            <java fork="true" classname="org.apache.tools.ant.launch.Launcher">
+                <classpath>
+                    <pathelement location="@{test-lib}/jcoverage.jar"/>
+                    <pathelement location="@{test-lib}/junit-3.8.1.jar"/>
+                    <pathelement path="${java.class.path}"/>
+                </classpath>
+                <arg value="-buildfile"/>
+                <arg value="${ant.file}"/>
+                <arg value="-Dcactus.test-lib=@{test-lib}"/>
+                <arg value="-Dcactus.dist=@{dist}"/>
+                <arg value="-Dcactus.build-instrumented=@{build-instrumented}"/>
+                <arg value="-Dcactus.build-test=@{build-test}"/>
+                <arg value="-Dcactus.build-lib=@{build-lib}"/>
+                <arg value="-Dcactus.test-tomcat=@{test-tomcat}"/>
+                <arg value="-Dcactus.test-results=@{test-results}"/>
+                <arg value="cactify-nowar"/>
+                <arg value="cactus"/>
+            </java>
+        </sequential>
+    </macrodef>
+
+    <macrodef name="qa-war">
+        <attribute name="root-dir" default="${basedir}/.."/>
+        <attribute name="dist" default="@{root-dir}/dist"/>
+        <attribute name="test-lib" default="@{root-dir}/test-lib"/>
+        <attribute name="test-tomcat" default="@{root-dir}/test-tomcat"/>
+        <attribute name="test-results" default="@{root-dir}/reports/test-results"/>
+        <attribute name="findbugs-results" default="@{root-dir}/reports/findbugs-results"/>
+        <attribute name="build" default="${basedir}/build"/>
+        <attribute name="build-instrumented" default="${basedir}/build-instrumented"/>
+        <attribute name="build-test" default="${basedir}/build-test"/>
+        <attribute name="build-lib" default="@{root-dir}/build-lib"/>
+        <attribute name="warfilename" default="${ant.project.name}-${version}.war"/>
+        <attribute name="warfile" default="@{dist}/@{warfilename}"/>
+        <element name="excluir-instrumentacion" optional="true"/>
+        <sequential>
+            <instrumentar-clases test-lib="@{test-lib}" build="@{build}" build-instrumented="@{build-instrumented}">
+                <exclusiones>
+                    <excluir-instrumentacion/>
+                </exclusiones>
+            </instrumentar-clases>
+            <java fork="true" classname="org.apache.tools.ant.launch.Launcher">
+                <classpath>
+                    <pathelement location="@{test-lib}/jcoverage.jar"/>
+                    <pathelement location="@{test-lib}/junit.jar"/>
+                    <pathelement path="${java.class.path}"/>
+                </classpath>
+                <arg value="-buildfile"/>
+                <arg value="${ant.file}"/>
+                <arg value="-Dcactus.test-lib=@{test-lib}"/>
+                <arg value="-Dcactus.dist=@{dist}"/>
+                <arg value="-Dcactus.build-instrumented=@{build-instrumented}"/>
+                <arg value="-Dcactus.build-test=@{build-test}"/>
+                <arg value="-Dcactus.build-lib=@{build-lib}"/>
+                <arg value="-Dcactus.test-tomcat=@{test-tomcat}"/>
+                <arg value="-Dcactus.test-results=@{test-results}"/>
+                <arg value="-Dcactus.warfile=@{warfile}"/>
+                <arg value="cactify-warfile"/>
+                <arg value="cactus"/>
+            </java>
+        </sequential>
+    </macrodef>
+
+    <macrodef name="copiar-libs">
+        <attribute name="root-dir" default="${basedir}/.."/>
+        <attribute name="dist" default="@{root-dir}/dist"/>
+        <attribute name="lib" default="${basedir}/lib"/>
+        <sequential>
+            <copy todir="@{dist}">
+                <fileset dir="@{lib}" includes="*.jar"/>
+            </copy>
+        </sequential>
+    </macrodef>
+
+    <target name="cactify-nowar">
+        <taskdef resource="cactus.tasks">
+            <classpath>
+                <pathelement location="${cactus.test-lib}/junit-3.8.1.jar"/>
+                <pathelement location="${cactus.test-lib}/cactus-1.7.1.jar"/>
+                <pathelement location="${cactus.test-lib}/cactus-ant-1.7.1.jar"/>
+                <pathelement location="${cactus.test-lib}/commons-httpclient-2.0.2.jar"/>
+                <pathelement location="${cactus.test-lib}/commons-logging-1.0.4.jar"/>
+                <pathelement location="${cactus.test-lib}/aspectjrt-1.2.1.jar"/>
+                <pathelement location="${cactus.test-lib}/cargo-0.5.jar"/>
+                <pathelement location="${cactus.test-lib}/jboss-j2ee-3.2.3.jar"/>
+                <pathelement location="${cactus.test-lib}/httpunit-1.6.jar"/>
+                <pathelement location="${cactus.test-lib}/org.mortbay.jetty-4.2.17.jar"/>
+                <pathelement location="${cactus.test-lib}/nekohtml-0.9.1.jar"/>
+                <pathelement location="${cactus.test-lib}/jasper-runtime-4.1.30.jar"/>
+                <pathelement location="${cactus.test-lib}/commons-httpclient-2.0.2.jar"/>
+            </classpath>
+        </taskdef>
+        <cactifywar destfile="${cactus.dist}/test-cactified.war" version="2.3">
+            <classes dir="${cactus.build-instrumented}"/>
+            <classes dir="${cactus.build-test}"/>
+            <lib dir="${cactus.dist}" includes="*.jar" excludes="log4j*.jar"/>
+            <!--      <lib dir="${test-lib}" includes="jcoverage.jar" />-->
+        </cactifywar>
+    </target>
+
+    <target name="cactify-warfile">
+        <taskdef resource="cactus.tasks">
+            <classpath>
+                <pathelement location="${cactus.test-lib}/junit-3.8.1.jar"/>
+                <pathelement location="${cactus.test-lib}/cactus-1.7.1.jar"/>
+                <pathelement location="${cactus.test-lib}/cactus-ant-1.7.1.jar"/>
+                <pathelement location="${cactus.test-lib}/commons-httpclient-2.0.2.jar"/>
+                <pathelement location="${cactus.test-lib}/commons-logging-1.0.4.jar"/>
+                <pathelement location="${cactus.test-lib}/aspectjrt-1.2.1.jar"/>
+                <pathelement location="${cactus.test-lib}/cargo-0.5.jar"/>
+                <pathelement location="${cactus.test-lib}/jboss-j2ee-3.2.3.jar"/>
+                <pathelement location="${cactus.test-lib}/httpunit-1.6.jar"/>
+                <pathelement location="${cactus.test-lib}/org.mortbay.jetty-4.2.17.jar"/>
+                <pathelement location="${cactus.test-lib}/nekohtml-0.9.1.jar"/>
+                <pathelement location="${cactus.test-lib}/jasper-runtime-4.1.30.jar"/>
+                <pathelement location="${cactus.test-lib}/commons-httpclient-2.0.2.jar"/>
+            </classpath>
+        </taskdef>
+        <cactifywar srcfile="${cactus.warfile}" destfile="${cactus.dist}/test-cactified.war">
+            <classes dir="${cactus.build-instrumented}"/>
+            <classes dir="${cactus.build-test}"/>
+            <lib dir="${cactus.dist}" includes="*.jar" excludes="log4j*.jar"/>
+        </cactifywar>
+    </target>
+
+    <target name="cactus">
+        <taskdef resource="cactus.tasks">
+            <classpath>
+                <pathelement location="${cactus.test-lib}/junit-3.8.1.jar"/>
+                <pathelement location="${cactus.test-lib}/cactus-1.7.1.jar"/>
+                <pathelement location="${cactus.test-lib}/cactus-ant-1.7.1.jar"/>
+                <pathelement location="${cactus.test-lib}/commons-httpclient-2.0.2.jar"/>
+                <pathelement location="${cactus.test-lib}/commons-logging-1.0.4.jar"/>
+                <pathelement location="${cactus.test-lib}/aspectjrt-1.2.1.jar"/>
+                <pathelement location="${cactus.test-lib}/cargo-0.5.jar"/>
+                <pathelement location="${cactus.test-lib}/jboss-j2ee-3.2.3.jar"/>
+                <pathelement location="${cactus.test-lib}/httpunit-1.6.jar"/>
+                <pathelement location="${cactus.test-lib}/org.mortbay.jetty-4.2.17.jar"/>
+                <pathelement location="${cactus.test-lib}/nekohtml-0.9.1.jar"/>
+                <pathelement location="${cactus.test-lib}/jasper-runtime-4.1.30.jar"/>
+                <pathelement location="${cactus.test-lib}/commons-httpclient-2.0.2.jar"/>
+            </classpath>
+        </taskdef>
+        <copy todir="${cactus.test-tomcat}/common/lib" flatten="true">
+            <fileset dir="${cactus.test-lib}" includes="*.jar"/>
+        </copy>
+        <path id="cactus.classpath">
+            <fileset dir="${basedir}" includes="*lib/*.jar"/>
+            <fileset dir="${cactus.dist}" includes="*.jar"/>
+            <fileset dir="${cactus.build-lib}" includes="*.jar"/>
+        </path>
+        <mkdir dir="${cactus.test-results}"/>
+        <cactus warfile="${cactus.dist}/test-cactified.war">
+            <containerset>
+                <tomcat5x dir="${cactus.test-tomcat}"
+                          tmpdir="${cactus.test-tomcat}/temp"
+                          serverxml="${cactus.test-tomcat}/conf/server.xml">
+                    <conf dir="${cactus.test-tomcat}/conf"/>
+                </tomcat5x>
+            </containerset>
+            <formatter type="plain"/>
+            <formatter type="xml"/>
+            <classpath>
+                <pathelement location="${cactus.build-instrumented}"/>
+                <!--         <pathelement location="${test-lib}/jcoverage.jar" /> --><!--         <pathelement location="${test-lib}/lib/junit/3.8.1/junit.jar" /> -->
+                <path refid="cactus.classpath"/>
+                <pathelement location="${cactus.build-test}"/>
+            </classpath>
+            <batchtest todir="${cactus.test-results}">
+                <fileset dir="${cactus.build-test}">
+                    <include name="**/*Test.class"/>
+                    <include name="**/Test*.class"/>
+                </fileset>
+            </batchtest>
+        </cactus>
+    </target>
+
+</project>
