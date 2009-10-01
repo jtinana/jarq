@@ -1,4 +1,4 @@
-#summary Configuring the Memcache Advice *(Beta)*
+#summary Configuring the Memcache Advice (Beta)
 
 = Introduction =
 
