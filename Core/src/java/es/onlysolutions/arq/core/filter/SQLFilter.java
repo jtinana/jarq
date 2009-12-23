@@ -162,7 +162,7 @@ public abstract class SQLFilter extends AbstractFilter
             /**
              * Sustituimos los atributos del select por un select count(*).
              */
-            int lastIndexOfFrom = sb.lastIndexOf("FROM");
+        	int lastIndexOfFrom = getLastIdxSelectClause(sb.toString());
             if (lastIndexOfFrom < 1)
             {
                 throw new IllegalArgumentException("La clausula SELECT indicada no contiene un FROM. " + this.sqlClause);
@@ -281,4 +281,32 @@ public abstract class SQLFilter extends AbstractFilter
 
         return result;
     }
+    
+
+	private int getLastIdxSelectClause(final String query) {
+		final String SELECT = "SELECT";
+		final String FROM = "FROM";
+		if (query.indexOf(SELECT) == -1) {
+			return -1;
+		} else {
+			int iSelect = 1;
+			int iFrom = -1;
+			int found = 1;
+			int index = query.indexOf(SELECT, 0) + SELECT.length();
+			while (found > 0 && index != -1) {
+				iSelect = query.indexOf(SELECT, index);
+				iFrom = query.indexOf(FROM, index);
+				if (iSelect < iFrom && iSelect != -1) {
+					found++;
+					index = iSelect + SELECT.length();
+				} else if (iFrom != -1) {
+					found--;
+					index = iFrom + FROM.length();
+				} else {
+					index = -1;
+				}
+			}
+			return index == -1 ? -1 : index - FROM.length();
+		}
+	}
 }
